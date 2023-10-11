@@ -1,0 +1,15 @@
+<resources>
+    <string name="app_name">ShopOrganizer</string>
+    <string name="bottom_nav_home">Home</string>
+    <string name="bottom_nav_profile">Profile</string>
+
+    <!-- Home Screen -->
+    <string name="welcome_header">Welcome back</string>
+    <string name="crochet_label">Crochet Items</string>
+    <string name="knit_label">Knit Items</string>
+
+    <!-- Profile Screen -->
+    <string name="email_label">Email</string>
+    <string name="website_label">Website</string>
+    <string name="location_label">Location</string>
+</resources>
