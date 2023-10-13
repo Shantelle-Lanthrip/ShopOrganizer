@@ -7,5 +7,7 @@ data class ShopItem(
     val type: Type,
     val title: String,
     val description: String,
+    val quantity: String,
+    val rating: Int = 1,
     val itemImageId: Int = 0
 ) : Serializable

@@ -12,4 +12,9 @@
     <string name="email_label">Email</string>
     <string name="website_label">Website</string>
     <string name="location_label">Location</string>
+
+    <!-- Item Detail Screen -->
+    <string name="rating_label">Rating</string>
+    <string name="quantity_label">Quantity</string>
+    <string name="description_label">Description</string>
 </resources>
