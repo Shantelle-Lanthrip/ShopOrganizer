@@ -1,23 +1,24 @@
 package com.example.shoporganizer
 
-import android.annotation.SuppressLint
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import com.example.shoporganizer.ui.theme.ShopOrganizerTheme
-import com.example.shoporganizer.navigation.AppNavigation
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Surface
+import androidx.compose.ui.Modifier
+import androidx.navigation.compose.rememberNavController
+import com.example.shoporganizer.navigation.graph.RootNavGraph
+
 class MainActivity : ComponentActivity() {
-    @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            ShopOrganizerTheme {
-                /******************************************************
-                 * Implemented another navigation to handle navigating
-                 * to selected shop items. This is a work in progress
-                 * and I will revisit the bottom nav soon.
-                 *****************************************************/
-                AppNavigation()
+            Surface(
+                modifier = Modifier.fillMaxSize(),
+                color = MaterialTheme.colors.background
+            ) {
+                RootNavGraph(navController = rememberNavController())
             }
         }
     }

@@ -1,4 +1,4 @@
-package com.example.shoporganizer.home
+package com.example.shoporganizer.presentation.screen.home
 
 import androidx.annotation.StringRes
 import androidx.compose.foundation.Image
@@ -26,45 +26,50 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavHostController
 import com.example.shoporganizer.R
-import com.example.shoporganizer.data.ShopRepo
 import com.example.shoporganizer.data.model.ShopItem
 import com.example.shoporganizer.data.model.ShopProfile
 import com.example.shoporganizer.data.model.Type
+import com.example.shoporganizer.navigation.screen.Screen
 
 @Composable
-fun HomeScreen(modifier: Modifier = Modifier, selectedItem: (Int) -> Unit,) {
+fun HomeScreen(
+    modifier: Modifier = Modifier,
+    homeViewModel: HomeViewModel = viewModel(),
+    navController: NavHostController
+) {
+    val allItems by homeViewModel.itemList.collectAsState()
+    val profile by homeViewModel.profile.collectAsState()
 
-    val context = LocalContext.current
-    val shopItemList = remember { ShopRepo.getShopItems(context) }
-    val profile = remember { ShopRepo.profile}
+    Column(modifier) {
 
-    Column(
-        modifier
-            .verticalScroll(rememberScrollState())
-    ) {
-
-        HomeHeader(profile = profile)
+        profile?.let { profile ->
+            HomeHeader(profile = profile)
+        }
         HomeSection(title = R.string.crochet_label) {
-            ShopItemsGrid(shopItems = shopItemList.filter {
+            ShopItemsGrid(shopItems = allItems.filter {
                     shopItem -> shopItem.type == Type.CROCHET
-            }, selectedItem = selectedItem)
+            }, navController = navController
+            )
         }
         Spacer(Modifier.height(16.dp))
         HomeSection(title = R.string.knit_label) {
-            ShopItemsGrid(shopItems = shopItemList.filter {
+            ShopItemsGrid(shopItems = allItems.filter {
                     shopItem -> shopItem.type == Type.KNIT
-            }, selectedItem = selectedItem)
+            }, navController = navController
+            )
         }
     }
 }
@@ -75,15 +80,12 @@ private fun HomeHeader(
 ) {
     Box {
         TopAppBar(
-            backgroundColor = MaterialTheme.colorScheme.surfaceVariant,
+            backgroundColor = MaterialTheme.colorScheme.secondaryContainer,
             elevation = 0.dp,
             modifier = Modifier
                 .height(150.dp)
                 .clip(
-                    RoundedCornerShape(
-                        bottomStart = 24.dp,
-                        bottomEnd = 24.dp
-                    )
+                    shape = RoundedCornerShape(bottomStart = 16.dp, bottomEnd = 16.dp)
                 )
 
         ) {
@@ -117,7 +119,9 @@ fun HomeSection(
     modifier: Modifier = Modifier,
     content: @Composable () -> Unit
 ) {
-    Column(modifier) {
+    Column(modifier
+        .verticalScroll(rememberScrollState())
+    ) {
         Text(
             text = stringResource(title),
             style = MaterialTheme.typography.titleMedium,
@@ -135,7 +139,7 @@ fun HomeSection(
 fun ShopItemsGrid(
     modifier: Modifier = Modifier,
     shopItems: List<ShopItem>,
-    selectedItem: (Int) -> Unit,
+    navController: NavHostController
 ) {
     val scrollState = rememberLazyGridState()
     LazyHorizontalGrid(
@@ -148,7 +152,8 @@ fun ShopItemsGrid(
 
     ) {
         itemsIndexed(shopItems) { _, item ->
-            ShopItemCard(item, selectedItem)
+            ShopItemCard(item, navController = navController
+            )
         }
     }
 }
@@ -156,7 +161,7 @@ fun ShopItemsGrid(
 @Composable
 fun ShopItemCard(
     item: ShopItem,
-    selectedItem: (Int) -> Unit,
+    navController: NavHostController,
     modifier: Modifier = Modifier,
 ) {
     Surface(
@@ -164,13 +169,13 @@ fun ShopItemCard(
         color = MaterialTheme.colorScheme.surfaceVariant,
         modifier = modifier
     ) {
-        val context = LocalContext.current
+
         Row(
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier
                 .width(255.dp)
                 .clickable {
-                    selectedItem(item.id)
+                    navController.navigate(Screen.Details.passItemId(item.id))
                 },
         ) {
             Image(

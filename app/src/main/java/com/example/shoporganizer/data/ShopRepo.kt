@@ -8,13 +8,10 @@ import com.example.shoporganizer.data.model.Type
 
 object ShopRepo {
 
-    fun getItem(
-        itemId: Int,
-        context: Context
-    ): ShopItem = getShopItems(context).find {
+    fun getItem(itemId: Int): ShopItem = getShopItems().find {
         it.id == itemId
     }!!
-    fun getShopItems(context: Context) = listOf(
+    fun getShopItems() = listOf(
         ShopItem(
             id = 1,
             type = Type.CROCHET,
